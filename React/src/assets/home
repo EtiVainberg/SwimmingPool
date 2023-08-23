@@ -1,0 +1,409 @@
+// register-sign up
+
+
+// import { FormEvent, useState } from "react";
+// import Form from "react-bootstrap/Form";
+// import Button from "react-bootstrap/Button";
+// import { registerUser } from "../api/api";
+// import { useNavigate } from "react-router-dom";
+
+// export default function Register() {
+//   const [firstName, setFirstName] = useState("");
+//   const [firstNameValid, setFirstNameValid] = useState(true);
+//   const [lastName, setLastName] = useState("");
+//   const [lastNameValid, setLastNameValid] = useState(true);
+//   const [phone, setPhone] = useState("");
+//   const [phoneValid, setPhoneValid] = useState(true);
+//   const [email, setEmail] = useState("");
+//   const [emailValid, setEmailValid] = useState(true);
+//   const [address, setAddress] = useState("");
+//   const [addressValid, setAddressValid] = useState(true);
+//   const [password, setPassword] = useState("");
+//   const [passwordValid, setPasswordValid] = useState(true);
+//   const [verifyPassword, setVerifyPassword] = useState("");
+//   const [verifyPasswordValid, setVerifyPasswordValid] = useState(true);
+//   const [formError, setFormError] = useState("");
+
+//   const navigate = useNavigate();
+
+//   const validateFirstName = (value: string) => {
+//     if (!/^[a-zA-Z]{2,10}$/.test(value)) {
+//       setFirstNameValid(false);
+//       return false;
+//     }
+//     return true;
+//   };
+
+//   const validateLastName = (value: string) => {
+//     if (!/^[a-zA-Z]{2,10}$/.test(value)) {
+//       setLastNameValid(false);
+//       return false;
+//     }
+//     return true;
+//   };
+
+//   const validatePhone = (value: string) => {
+//     if (!/^\d{9,10}$/.test(value)) {
+//       setPhoneValid(false);
+//       return false;
+//     }
+//     return true;
+//   };
+
+//   const validateEmail = (value: string) => {
+//     if (!/^[a-zA-Z0-9._]+@[a-zA-Z]+(\.[a-zA-Z]+){1,2}$/.test(value)) {
+//       setEmailValid(false);
+//       return false;
+//     }
+//     return true;
+//   };
+
+//   const validateAddress = (value: string) => {
+//     if (!/^[a-zA-Z0-9+]{2,20}$/.test(value)) {
+//       setAddressValid(false);
+//       return false;
+//     }
+//     return true;
+//   };
+
+//   const validatePassword = (value: string) => {
+//     if (!/^[a-zA-Z0-9+]{6,10}$/.test(value)) {
+//       setPasswordValid(false);
+//       return false;
+//     }
+//     return true;
+//   };
+
+//   const validateVerifyPassword = (value: string) => {
+//     if (value !== password) {
+//       setVerifyPasswordValid(false);
+//       return false;
+//     }
+//     return true;
+//   };
+
+//   const handleFirstNameBlur = () => {
+//     validateFirstName(firstName);
+//   };
+
+//   const handleLastNameBlur = () => {
+//     validateLastName(lastName);
+//   };
+
+//   const handlePhoneBlur = () => {
+//     validatePhone(phone);
+//   };
+
+//   const handleEmailBlur = () => {
+//     validateEmail(email);
+//   };
+
+//   const handleAddressBlur = () => {
+//     validateAddress(address);
+//   };
+
+//   const handlePasswordBlur = () => {
+//     validatePassword(password);
+//   };
+
+//   const handleVerifyPasswordBlur = () => {
+//     validateVerifyPassword(verifyPassword);
+//   };
+
+//   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+//     event.preventDefault();
+
+//     const firstNameValid = validateFirstName(firstName);
+//     const lastNameValid = validateLastName(lastName);
+//     const phoneValid = validatePhone(phone);
+//     const emailValid = validateEmail(email);
+//     const addressValid = validateAddress(address);
+//     const passwordValid = validatePassword(password);
+//     const verifyPasswordValid = validateVerifyPassword(verifyPassword);
+
+//     if (
+//       firstNameValid &&
+//       lastNameValid &&
+//       phoneValid &&
+//       emailValid &&
+//       addressValid &&
+//       passwordValid &&
+//       verifyPasswordValid
+//     ) {
+//       try {
+//         await registerUser(firstName, lastName, email, phone, address, password);
+//         navigate("/");
+//       } catch (error) {
+//         console.error(error);
+//       }
+//     } else {
+//       setFormError("Some fields are invalid");
+//     }
+//   };
+
+//   return (
+//     <Form onSubmit={handleSubmit}>
+//       <Form.Group controlId="firstName">
+//         <Form.Label>שם פרטי</Form.Label>
+//         <Form.Control
+//           autoFocus
+//           type="text"
+//           value={firstName}
+//           onChange={(e) => setFirstName(e.target.value)}
+//           onBlur={handleFirstNameBlur}
+//           isValid={firstNameValid}
+//         />
+//         {!firstNameValid && (
+//           <Form.Text className="text-danger">שם פרטי אינו תקין</Form.Text>
+//         )}
+//       </Form.Group>
+//       <Form.Group controlId="lastName">
+//         <Form.Label>שם משפחה</Form.Label>
+//         <Form.Control
+//           type="text"
+//           value={lastName}
+//           onChange={(e) => setLastName(e.target.value)}
+//           onBlur={handleLastNameBlur}
+//           isValid={lastNameValid}
+//         />
+//         {!lastNameValid && (
+//           <Form.Text className="text-danger">שם משפחה אינו תקין</Form.Text>
+//         )}
+//       </Form.Group>
+//       <Form.Group controlId="phone">
+//         <Form.Label>מספר טלפון</Form.Label>
+//         <Form.Control
+//           type="text"
+//           value={phone}
+//           onChange={(e) => setPhone(e.target.value)}
+//           onBlur={handlePhoneBlur}
+//           isValid={phoneValid}
+//         />
+//         {!phoneValid && (
+//           <Form.Text className="text-danger">מספר טלפון אינו תקין</Form.Text>
+//         )}
+//       </Form.Group>
+//       <Form.Group controlId="email">
+//         <Form.Label>כתובת דואר אלקטרוני</Form.Label>
+//         <Form.Control
+//           type="email"
+//           value={email}
+//           onChange={(e) => setEmail(e.target.value)}
+//           onBlur={handleEmailBlur}
+//           isValid={emailValid}
+//         />
+//         {!emailValid && (
+//           <Form.Text className="text-danger">
+//             כתובת דואר אלקטרוני אינה תקינה
+//           </Form.Text>
+//         )}
+//       </Form.Group>
+//       <Form.Group controlId="address">
+//         <Form.Label>כתובת מלאה</Form.Label>
+//         <Form.Control
+//           type="text"
+//           value={address}
+//           onChange={(e) => setAddress(e.target.value)}
+//           onBlur={handleAddressBlur}
+//           isValid={addressValid}
+//         />
+//         {!addressValid && (
+//           <Form.Text className="text-danger">כתובת אינה תקינה</Form.Text>
+//         )}
+//       </Form.Group>
+//       <Form.Group controlId="password">
+//         <Form.Label>סיסמה</Form.Label>
+//         <Form.Control
+//           type="password"
+//           value={password}
+//           onChange={(e) => setPassword(e.target.value)}
+//           onBlur={handlePasswordBlur}
+//           isValid={passwordValid}
+//         />
+//         {!passwordValid && (
+//           <Form.Text className="text-danger">
+//             הסיסמה חייבת להיות בין 6 ל־10 תווים
+//           </Form.Text>
+//         )}
+//       </Form.Group>
+//       <Form.Group controlId="verifyPassword">
+//         <Form.Label>אימות סיסמה</Form.Label>
+//         <Form.Control
+//           type="password"
+//           value={verifyPassword}
+//           onChange={(e) => setVerifyPassword(e.target.value)}
+//           onBlur={handleVerifyPasswordBlur}
+//           isValid={verifyPasswordValid}
+//         />
+//         {!verifyPasswordValid && (
+//           <Form.Text className="text-danger" style={{ color: "red" }}>הסיסמאות לא תואמות</Form.Text>
+//         )}
+//       </Form.Group>
+//       {/* {formError && <p style={{ color: "red" }}>{formError}</p>} */}
+//       <Button variant="primary" type="submit">
+//         הירשם
+//       </Button>
+//     </Form>
+//   );
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// login-signin
+
+
+// ---------------------------------
+// import { FormEvent, useState } from "react";
+// // import { useNavigate } from "react-router-dom";
+// import { loginUser } from '../api/api';
+// import Form from "react-bootstrap/Form";
+// import Button from "react-bootstrap/Button";
+// import { Link, useNavigate } from "react-router-dom";
+
+
+
+// export default function SignIn() {
+//     const [email, setEmail] = useState("");
+//     const [password, setpassword] = useState("");
+//     const navigate = useNavigate();
+//     // const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     //     setEmail(e.target.value);
+//     // };
+
+//     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+//         event.preventDefault();
+
+//         await loginUser(email, password);
+
+//         navigate('/')
+//     }
+
+
+//     return (
+//         <Form onSubmit={handleSubmit}>
+//             {/* Email input field */}
+//             <Form.Group controlId="email">
+//                 <Form.Label>Email:</Form.Label>
+//                 <Form.Control
+//                     type="email"
+//                     value={email}
+//                     pattern="[a-zA-Z0-9._]+@[a-zA-Z]+(\.[a-zA-Z]+){1,2}"
+//                     onChange={(e) => { setEmail(e.target.value) }}
+//                     required
+//                 />
+//             </Form.Group>
+//             {/* Address input field */}
+//             <Form.Group controlId="password">
+//                 <Form.Label>Password:</Form.Label>
+//                 <Form.Control
+//                     type="password"
+//                     value={password}
+//                     pattern="[a-zA-Z0-9+]{6,10}"
+//                     onChange={(e) => { setpassword(e.target.value) }}
+//                     required
+//                 />
+//             </Form.Group>
+//             <Button type="submit">Submit</Button>
+
+
+//             <p>Not registered yet?</p>
+//             <Link to={"/register"}>Register</Link>
+
+//         </Form>
+
+//     );
+// };
+
+// ----------------------------------
+// SUBSCRIPTION
+
+// import {BottomNavigation, BottomNavigationAction } from '@mui/material'
+// import { useState } from 'react';
+
+// export default function Subscription() {
+//     const [payment, setPayment] = useState("");
+//     const [subscription, setSubscription] = useState("");
+//     const [value, setValue] = useState("");
+
+//     return (
+//         <>
+//             <p>subscription type:</p>
+//             <BottomNavigation
+//                 value={subscription}
+//                 onChange={(event, newValue) => {
+//                     setSubscription(newValue);
+//                 }}
+//                 showLabels
+//             >
+//                 <BottomNavigationAction label="weekly" />
+//                 <BottomNavigationAction label="monthly" />
+//                 <BottomNavigationAction label="yearly" />
+//             </BottomNavigation>
+
+//             <p>subscription type:</p>
+
+//             <BottomNavigation
+//                 value={value}
+//                 onChange={(event, newValue) => {
+//                     setValue(newValue);
+//                 }}
+//                 showLabels
+//             >
+//                 <BottomNavigationAction label="personal" />
+//                 <BottomNavigationAction label="familial" />
+//             </BottomNavigation>
+
+//             <p>Total Payment: {payment}</p>
+//             <p>Move to payment</p>
+//         </>
+//     );
+// }
+
+
+
+{/* <FormControl>
+    <FormLabel id="demo-radio-buttons-group-label">For:</FormLabel>
+    <RadioGroup
+        aria-labelledby="demo-radio-buttons-group-label"
+        defaultValue="female"
+        name="radio-buttons-group"
+        row={true}
+    >
+        <FormControlLabel value="personal" control={<Radio />} label="personal" />
+        <FormControlLabel value="familial" control={<Radio />} label="familial" />
+    </RadioGroup>
+</FormControl> */}
+{/* <FormControl>
+                <FormLabel id="demo-radio-buttons-group-label">Subscription type</FormLabel>
+                <RadioGroup
+                    aria-labelledby="demo-radio-buttons-group-label"
+                    defaultValue="female"
+                    name="radio-buttons-group"
+                    row={true}
+                >
+                    <FormControlLabel value="weekly" control={<Radio />} label="weekly" />
+                    <FormControlLabel value="monthly" control={<Radio />} label="monthly" />
+                    <FormControlLabel value="yearly" control={<Radio />} label="yearly" />
+                </RadioGroup>
+            </FormControl> */}
+
+
