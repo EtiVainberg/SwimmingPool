@@ -50,6 +50,8 @@ export default function Checkout() {
   const [duration, setDuration] = useState('');
   const [useStorageCreditDetails, setUseStorageCreditDetails] = useState(false);
   const [storageCreditDetails, setStorageCreditDetails] = useState(0);
+  const [capacity, setCapacity] = useState(0);
+
   const [isSubscribe, setIsSubscribe] = useState(false);
   const [error, setError] = useState<boolean | string>(false);
 
@@ -168,7 +170,9 @@ export default function Checkout() {
                 useStorageCreditDetails,
                 setUseStorageCreditDetails,
                 storageCreditDetails,
-                setStorageCreditDetails
+                setStorageCreditDetails,
+                capacity,
+                setCapacity,
               }}
             >
 

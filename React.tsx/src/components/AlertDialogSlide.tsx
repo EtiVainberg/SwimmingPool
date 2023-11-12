@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -11,10 +11,12 @@ import { forwardRef } from 'react';
 import PaymentForm from './PaymentForm';
 import SharedContext from './SharedContext';
 import { useNavigate } from 'react-router-dom';
-import { GetCookie, addPaymentDetails, registerToCourse } from '../api/api';
+import { GetCookie, addPaymentDetails, checkIsManager, registerToCourse } from '../api/api';
 import InsetDividers from './InsetDividers ';
 import Alert from '@mui/material/Alert';
 import BootstrapDialogTitle from './BootstrapDialogTitle';
+
+
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
     children: React.ReactElement<any, any>;
@@ -27,6 +29,7 @@ const Transition = forwardRef(function Transition(
 export default function AlertDialogSlide(props: any) {
   const [showPayment, setShowPayment] = useState(false);
   const [totalSum, setTotalSum] = useState(props.prop.price);
+  const [capacity,setCapacity]=useState(props.prop.capacity);
   const [nameCard, setNameCard] = useState('');
   const [cardNumber, setCardNumber] = useState('');
   const [expDate, setExpDate] = useState(new Date());
@@ -35,9 +38,21 @@ export default function AlertDialogSlide(props: any) {
   const [duration, setDuration] = useState('');
   const [useStorageCreditDetails, setUseStorageCreditDetails] = useState(false);
   const [storageCreditDetails, setStorageCreditDetails] = useState(0);
-
   const [enrollment, setEnrollment] = useState('');
+  const[isManager,setIsManager]=useState(0);
+
   const nav = useNavigate();
+
+ 
+  useEffect(()=>{
+
+    const fetchData=async()=>{
+      const res = await checkIsManager();
+      
+      setIsManager(res);
+    }
+    fetchData();
+  },[]);
 
   const handleClose = () => {
     props.onClose();
@@ -63,6 +78,9 @@ export default function AlertDialogSlide(props: any) {
     }
     const res = await registerToCourse(props.prop._id);
     console.log(res);
+    
+   
+  
 
     switch (res) {
       case 201:
@@ -121,7 +139,9 @@ export default function AlertDialogSlide(props: any) {
                     setDuration,
                     useStorageCreditDetails,
                       setUseStorageCreditDetails,
-                      storageCreditDetails, setStorageCreditDetails
+                      storageCreditDetails, 
+                      setStorageCreditDetails,
+                      capacity,setCapacity
                   }}
                 >
                   <PaymentForm />
@@ -139,7 +159,7 @@ export default function AlertDialogSlide(props: any) {
             disabled={(!useStorageCreditDetails) && (nameCard === '' || cardNumber.length < 16 ||
               expDate === new Date() || cvv.length < 3)}>
             Pay</Button>
-            : enrollment === '' ? GetCookie() ? <Button onClick={handleRegister}>For Registration</Button> : <BootstrapDialogTitle /> : null}
+            : enrollment === '' ? GetCookie() ? props.show===true&&<Button onClick={handleRegister}>For Registration</Button> : <BootstrapDialogTitle /> : null}
         </DialogActions>
       </Dialog>
     </div>

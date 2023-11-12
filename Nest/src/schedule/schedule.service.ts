@@ -12,47 +12,60 @@ export class ScheduleService {
 
   constructor(@InjectModel('Schedule') private readonly ScheduleModel: Model<ScheduleDocument>, @Inject(forwardRef(() => CoursesService)) private courseService: CoursesService) { }
 
-  async checkAddCourse(startDate: Date, endDate: Date, numHours: number): Promise<boolean> {
-    const currentDate = new Date(startDate);
-    const localEndDate = new Date(endDate);
+async checkAddCourse(startDate: Date, endDate: Date, numHours: number): Promise<boolean> {
+  const currentDate = new Date(startDate);
+  const localEndDate = new Date(endDate);
 
-    console.log(startDate, currentDate, endDate, localEndDate);
+  // 1. בדוק שהתאריך הראשון לא נמצא ביום שבת (יום 6).
+  if (currentDate.getDay() === 6) {
+      return false; // לא ניתן להוסיף קורס בשבת
+  }
 
-    while (currentDate <= localEndDate) {
+  // 2. בדוק שהשעה המשוערכת לסיום הקורס היא עד 10 בלילה (22:00).
+  if (currentDate.getHours() + numHours > 22) {
+      return false; // לא ניתן להוסיף קורס שמסתיים אחרי 22:00
+  }
+
+  while (currentDate <= localEndDate) {
+      // נוסיף את הפונקציה הנוספת כאן שתבדוק ששעת התחלת הקורס היא בין 6 בבוקר ל-10 בלילה
+      if (!this.isWithinOpeningHours(currentDate)) {
+          return false; // שעת התחלת הקורס אינה בשעות הפתיחה
+      }
+
       const dayOfWeek = currentDate.getDay();
 
       const schedules = await this.ScheduleModel.find({
-        $or: [
-          {
-            $and: [
-              { TimeBegin: { $lte: currentDate } },
-              { TimeEnd: { $gt: currentDate } }
-            ]
-          },
-          {
-            $and: [
-              { TimeBegin: { $lt: new Date(currentDate.getTime() + numHours * 60 * 60 * 1000) } },
-              { TimeEnd: { $gt: currentDate } }
-            ]
-          },
-          {
-            $and: [
-              { TimeBegin: { $lte: currentDate } },
-              { TimeEnd: { $gte: new Date(currentDate.getTime() + numHours * 60 * 60 * 1000) } }
-            ]
-          }
-        ]
+          $or: [
+              {
+                  $and: [
+                      { TimeBegin: { $lte: currentDate } },
+                      { TimeEnd: { $gt: currentDate } }
+                  ]
+              },
+              {
+                  $and: [
+                      { TimeBegin: { $lt: new Date(currentDate.getTime() + numHours * 60 * 60 * 1000) } },
+                      { TimeEnd: { $gt: currentDate } }
+                  ]
+              },
+              {
+                  $and: [
+                      { TimeBegin: { $lte: currentDate } },
+                      { TimeEnd: { $gte: new Date(currentDate.getTime() + numHours * 60 * 60 * 1000) } }
+                  ]
+              }
+          ]
       }).exec();
 
       if (schedules.length > 0) {
-        return false; // Overlapping schedule found, return false
+          return false; // נמצאו לוזיות מתנגשות, לא ניתן להוסיף את הקורס
       }
 
-      currentDate.setDate(currentDate.getDate() + 7); // Move to the next week
-    }
-
-    return true; // No overlapping schedules found, return true
+      currentDate.setDate(currentDate.getDate() + 7); // לעבור לשבוע הבא
   }
+
+  return true; // לא נמצאו לוזיות מתנגשות, ניתן להוסיף את הקורס
+}
 
   async addCourse(course: Courses) {
     const startDate = new Date(course.StartDate);
@@ -80,14 +93,7 @@ export class ScheduleService {
   async findByCourseId(_id: Types.ObjectId) {
     return await this.ScheduleModel.find({ Course: _id });
   }
-  // async getByDate(date: Date) {
-  //   const startDate = new Date(date.getFullYear(), date.getMonth(), 1);
-  //   const endDate = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-  
-  //   return await this.ScheduleModel.find({
-  //     TimeBegin: { $gte: startDate, $lte: endDate }
-  //   });
-  // }
+ 
 
   async getByDate(date: Date) {
     const startDate = new Date(date.getFullYear(), date.getMonth(), 1);
@@ -97,6 +103,16 @@ export class ScheduleService {
       TimeBegin: { $gte: startDate, $lte: endDate },
     }).populate('Course');
   }
+
+  
+private isWithinOpeningHours(date: Date): boolean {
+  const openingHour = 6;
+  const closingHour = 22;
+
+  const hour = date.getHours();
+
+  return hour >= openingHour && hour <= closingHour;
+}
   
 }
 

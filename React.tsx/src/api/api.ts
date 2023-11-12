@@ -24,12 +24,36 @@ export const getDetails = async () => {
         return false;
     }
     else {
+
         try {
             const res = await api.get(`${config.api}/userDetails`, {
                 headers: {
                     'authorization': GetCookie()
                 }
             });
+
+            return res.data;
+        }
+        catch (error: any) {
+            return error?.response?.status;
+        }
+    }
+
+}
+
+export const getAmountNewReply = async () => {
+    if (!GetCookie()) {
+        return false;
+    }
+    else {
+
+        try {
+            const res = await api.get(`${config.api}/comments/getAmountNewReply`, {
+                headers: {
+                    'authorization': GetCookie()
+                }
+            });
+
             return res.data;
         }
         catch (error: any) {
@@ -46,6 +70,7 @@ export const RemoveCookie = () => {
 
 export const loginUser = async (email: string, password: string) => {
     try {
+        RemoveCookie();
         const res = await api.post(`${config.api}/signin`, { email, password });
         // const resp = await api.get(`${config.api}/emails/send`);
 
@@ -58,6 +83,7 @@ export const loginUser = async (email: string, password: string) => {
 
 export const registerUser = async (firstName: string, lastName: string, email: string, phone: string, address: string, password: string) => {
     try {
+        RemoveCookie();
         const res = await api.post(`${config.api}/register`, { firstName, lastName, email, phone, address, password });
         SetCookie(res.data[0]);
         return (res.data[1] === 'user');
@@ -211,6 +237,21 @@ export const addCourse = async (TeacherName: string, NumberOfMeeting: number, Co
     }
 };
 
+export const getAllCourses = async () => {
+    try {
+        const res = await api.get(`${config.api}/course/getAll`, {
+            headers: {
+                authorization: GetCookie(),
+            },
+        });
+        return res.data;
+    } catch (error: any) {
+        console.error('Error:', error);
+        console.log('Response status:', error?.response?.status);
+        return error?.response?.status;
+    }
+};
+
 export const getCoursesType = async () => {
     try {
         const res = await api.get(`${config.api}/course/getType`, {
@@ -312,6 +353,36 @@ export const updateComment = async (_id: any) => {
     }
 }
 
+export const updateReplyStatusOfComment = async (_id: any) => {
+    try {
+        const res = await api.put(`${config.api}/comments/updateReplyStatus/${_id}`, null, {
+            headers: {
+                authorization: GetCookie(),
+            },
+        });
+        console.log(res.status);
+
+        return res.status;
+    } catch (error: any) {
+        console.error('Error:', error);
+        console.log('Response status:', error?.response?.status);
+        return error?.response?.status;
+    }
+}
+export const replyComment = async (reply: string, _id: any) => {
+    try {
+        const res = await api.post(`${config.api}/comments/reply`, { reply, _id }, {
+            headers: {
+                authorization: GetCookie(),
+            },
+        });
+        return res.status;
+    } catch (error: any) {
+        console.error('Error:', error);
+        console.log('Response status:', error?.response?.status);
+        return error?.response?.status;
+    }
+}
 
 export const getComments = async () => {
     try {
@@ -322,6 +393,24 @@ export const getComments = async () => {
         });
         console.log(res.data);
 
+        return [res.status, res.data];
+    } catch (error: any) {
+        console.error('Error:', error);
+        console.log('Response status:', error?.response?.status);
+        return [error?.response?.status];
+    }
+}
+
+export const getCommentAndReply = async (skip: number) => {
+    // export const getCommentAndReply = async () => {
+    try {
+
+        // getNewReply?skip=0&limit=20
+        const res = await api.get(`${config.api}/comments/getNewReply?skip=${skip}&limit=3`, {
+            headers: {
+                authorization: GetCookie(),
+            },
+        });
         return [res.status, res.data];
     } catch (error: any) {
         console.error('Error:', error);
@@ -396,3 +485,15 @@ export const addSatisfaction = async (Service: number,
         return error?.response?.status;
     }
 }
+export const getManageCourses = async () => {
+      try {
+        const res = await api.get(`${config.api}/course/getCourses`)
+        console.log('456', res)
+    
+        return res.data
+      } catch (error:any) {
+        console.error('Error:', error)
+        console.log('Response status:', error?.response?.status)
+        return error?.response?.status
+      }
+    }

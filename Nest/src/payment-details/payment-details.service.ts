@@ -25,7 +25,6 @@ export class PaymentDetailsService {
               cardNumber: trimmedCardNumber,
             });
             const newDetails = await new this.creditDetails(newCreditDetails).save();
-            console.log(newDetails);
             return HttpStatus.CREATED;
         }
         catch (error) {

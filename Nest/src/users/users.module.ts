@@ -8,7 +8,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from 'src/Roles/roles.guard';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: User.name, schema: UserSchema }])],
+  imports: [MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+],
   providers: [UsersService, JwtService, {
     provide: APP_GUARD,
     useClass: RolesGuard

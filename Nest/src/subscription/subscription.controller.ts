@@ -29,7 +29,6 @@ export class SubscriptionController {
     @UseGuards(AuthGuard, RolesGuard)
     @Roles(Role.Admin, Role.User)
     async checkActiveSubscription(@Req() req) {
-        console.log('here');
         
         return this.subscriptionService.check(this.authService.extractTokenFromHeader(req));
     }

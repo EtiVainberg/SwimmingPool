@@ -19,19 +19,16 @@ export class CoursesService {
             let newCourse = await new this.CourseModel(course).save();
             const countMeetings = await this.schedule.addCourse(course);
 
-            console.log(countMeetings);
 
             newCourse.NumberOfMeeting = countMeetings;
 
             // Save the updated newCourse
             newCourse = await this.CourseModel.findByIdAndUpdate(newCourse._id, newCourse, { new: true });
 
-            console.log(newCourse.NumberOfMeeting);
 
             return await this.schedule
                 .findByCourseId(newCourse._id)
                 .then((resSchedule) => {
-                    console.log(newCourse, resSchedule);
 
                     return [newCourse, resSchedule];
                 });
@@ -56,6 +53,12 @@ export class CoursesService {
         return await this.CourseModel.find({ StartDate: { $gte: currentDate } }).exec();
     }
 
+    
+    async getAllCourses() {
+       
+        return await this.CourseModel.find().exec();
+    }
+
     async checkUpdateCapacity(courseId: string) {
         try {
             const course = await this.CourseModel.findById(courseId).exec();
@@ -68,7 +71,10 @@ export class CoursesService {
                 // If there is available capacity, decrement the capacity by 1
                 const updatedCourse = await this.CourseModel.findByIdAndUpdate(
                     courseId,
-                    { $inc: { register: +1 } }, // Increase register by 1
+                 { $inc: { 
+                        register: +1 // Increase register by 1
+                    }}, // Increase register by 1
+                    
                     { new: true } // To return the updated course after the update
                 ).exec();
 

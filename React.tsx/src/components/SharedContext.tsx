@@ -19,6 +19,8 @@ interface SharedContextProps {
     setUseStorageCreditDetails: Dispatch<SetStateAction<boolean>>;
     storageCreditDetails: number;
     setStorageCreditDetails: Dispatch<SetStateAction<number>>;
+    capacity:number;
+    setCapacity:Dispatch<SetStateAction<number>>;
 
 }
 

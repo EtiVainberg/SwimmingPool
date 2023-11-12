@@ -5,13 +5,13 @@ import { Enrollment } from "../Enrollment/enrollment";
 export type coursesDocument = Courses & Document;
 
 export enum CoursesType {
-    Begginners = 'Begginners',
+    Begginners = 'Beginners',
     Advanced = 'AdvancedSwimming',
     Hydrotherapy = "Hydrotherapy",
-    WaterExercise = "water-exercise",
+    WaterExercise = "Water-exercise",
     TherapeuticSwimming = "TherapeuticSwimming",
     LifeguardStudie = "LifeguardStudie",
-    FreeSwimming = "free swimming",
+    FreeSwimming = "Free swimming",
     SwimmingForSubscribers = "SwimmingForSubscribers"
 }
 

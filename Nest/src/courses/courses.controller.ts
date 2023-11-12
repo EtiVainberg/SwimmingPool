@@ -34,5 +34,11 @@ export class CoursesController {
         return await this.service.getCourses();
     }
 
+    @HttpCode(HttpStatus.OK)
+    @Get('getCourses')
+    async getAllCourses() {
+        return await this.service.getAllCourses();
+    }
+
 }
 

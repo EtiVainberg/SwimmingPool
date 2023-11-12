@@ -11,7 +11,6 @@ export enum SubscriptionType {
 }
 
 export function getPrice(type: SubscriptionType): number {
-  console.log(type);
   
   switch (type) {
     case SubscriptionType.Yearly:

@@ -7,7 +7,7 @@ import { CustomButtonInput } from '@fullcalendar/core/index.js';
 import { grey } from '@mui/material/colors';
 import { Alert } from '@mui/material';
 import ScheduleDetailCard from './ScheduleDetailCard';
-
+import { PDFDownloadLink, Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
 export default function ColumnSpanningDerived() {
   const [schedule, setSchedule] = useState([]);
   const [courseTypes, setCourseTypes] = useState<string[]>([]);
@@ -17,7 +17,7 @@ export default function ColumnSpanningDerived() {
 
   const getEventColor = (courseType: string) => {
     const index = courseTypes.indexOf(courseType);
-    const colors = ['yellow', 'red', 'blue', 'green', 'pink', 'purple', 'turquoise', 'orange'];
+    const colors = ['yellow', 'red', 'blue', 'green', 'pink', 'purple', 'turquoise', 'orange','brown'];
 
     if (index !== -1) {
       return colors[index];
@@ -166,6 +166,60 @@ export default function ColumnSpanningDerived() {
       };
     }) : [];
 
+    const MyDoc = ({ events }: { events: any[] }) => (
+      <Document>
+        <Page size="A4" style={styles.page}>
+          <View style={styles.section}>
+            <Text style={styles.title}>Event Schedule</Text>
+            <View style={styles.table}>
+              {events.map((event: any, index: any) => (
+                <View style={styles.row} key={index}>
+                  <Text style={styles.course}>{event.title}</Text>
+                  <Text style={styles.date}>{event.date}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        </Page>
+      </Document>
+    );
+    
+    // Define styles
+    const styles = StyleSheet.create({
+      page: {
+        backgroundColor: '#ffffff',
+        padding: 20,
+      },
+      section: {
+        margin: 10,
+        padding: 10,
+      },
+      title: {
+        fontSize: 20,
+        textAlign: 'center',
+        marginBottom: 10,
+      },
+      table: {
+        width: 'auto',
+      },
+      row: {
+        flexDirection: 'row',
+        borderBottomWidth: 1,
+        borderBottomColor: '#000',
+        borderBottomStyle: 'solid',
+        padding: 5,
+      },
+      course: {
+        width: '70%',
+        textAlign: 'left',
+      },
+      date: {
+        width: '30%',
+        textAlign: 'left',
+      },
+    });
+   
+
   return (
     // <Grid container spacing={2}>
     <div style={{ width: '100%', display: 'grid', gridTemplateColumns: '25% 75%' }}>
@@ -201,6 +255,17 @@ export default function ColumnSpanningDerived() {
           </div>
         )}
       </div>
+      <div>
+      {!error && (
+        <div>
+          <PDFDownloadLink document={<MyDoc events={events} />} fileName="schedule.pdf">
+            {({ blob, url, loading, error }) =>
+              loading ? 'Loading document...' : 'Download PDF'
+            }
+          </PDFDownloadLink>
+        </div>
+      )}
+    </div>
     </div>
 
 

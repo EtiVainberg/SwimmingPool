@@ -47,4 +47,11 @@ export class UsersController {
     updateUserDetails(@Body('userDetails') user: any, @Req() request:any) {        
         return this.usersService.update(this.authService.extractTokenFromHeader(request),user);
     }
+
+    @HttpCode(HttpStatus.OK)
+    @Get('getById')
+    @Roles(Role.Admin)
+    getUserById(@Body('_id') _id: String) {
+        return this.usersService.getUserById(_id);
+    }
 }

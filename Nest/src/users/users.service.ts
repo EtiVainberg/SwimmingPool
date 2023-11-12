@@ -11,7 +11,9 @@ import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from 'src/auth/constants';
 import { AuthService } from 'src/auth/auth.service';
 import { Role } from 'src/Roles/Role.enum';
-
+import { Module } from '@nestjs/common';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 @Injectable()
 export class UsersService {
 
@@ -67,6 +69,10 @@ export class UsersService {
         return await this.UserModel.find().exec();
     }
 
+    async getUserById(_id) {
+        return await this.UserModel.find({_id:_id}).exec();
+    }
+
     async getUserDetails(token: string) {
         const decodedToken = await this.authService.decoded(token);
         return await this.findUserByEmail(decodedToken['email']);
@@ -78,7 +84,6 @@ export class UsersService {
         const decodedToken = await this.authService.decoded(token);
         const userFromDb = await this.findUserByEmail(decodedToken['email']);
         if (await bcrypt.compare(updatedUser.prevPassword, userFromDb.password)) {
-            console.log('DW');
 
             const user_id = await this.findOneByEmail(decodedToken['email']);
             const reqUser = await this.hashPassword(updatedUser);
@@ -90,7 +95,6 @@ export class UsersService {
             );
             return updatedUserDoc; // Convert the result to a plain JavaScript object
         }
-        console.log('ERRR');
 
         throw new BadRequestException();
 

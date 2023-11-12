@@ -10,6 +10,8 @@ export default function Courses() {
         const fetchCourses = async () => {
             const res = await getCourses();
             setCourses(res);
+            console.log("789",res);
+            
         };
         fetchCourses();
     }, []);

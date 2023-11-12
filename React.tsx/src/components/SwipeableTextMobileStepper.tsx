@@ -85,26 +85,15 @@ function SwipeableTextMobileStepper() {
                     </Button>
                 }
             />
-            {/* <div style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr', // Single column
-                gridTemplateRows: '1fr',
-            }}> */}
-            {/* <Grid container>
-                    <Grid item xs={12} sm={6} style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-start' }}> */}
+           
             <div style={{
                 display: 'flex',
                 alignItems: 'flex-end',
 
-                // position: 'fixed',
-                // top: '50 %',
-                // left: 0,
-                // transform: 'translateX(-50 %)',
+              
             }}>
             </div>
-            {/* </Grid>
-                </Grid> */}
-            {/* </div> */}
+           
 
         </Box >
     );

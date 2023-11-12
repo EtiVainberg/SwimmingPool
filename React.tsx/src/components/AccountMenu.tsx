@@ -1,5 +1,3 @@
-// AccountMenu.js
-
 import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -17,13 +15,14 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import { Fragment, MouseEvent } from 'react';
-import { RemoveCookie, getDetails, updateUserDetails } from '../api/api';
+import { RemoveCookie, getAmountNewReply, getDetails, updateUserDetails } from '../api/api';
 import { useNavigate } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
 import Button from '@mui/material/Button';
+import MailIcon from '@mui/icons-material/Mail';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
-import { Typography } from '@mui/material';
+import { Badge, Typography, styled } from '@mui/material';
 
 interface UserDetails {
     firstName: string;
@@ -35,11 +34,41 @@ interface UserDetails {
     password: string;
 }
 
+const StyledBadge = styled(Badge)(({ theme }) => ({
+    '& .MuiBadge-badge': {
+        backgroundColor: '#44b700',
+        color: '#44b700',
+        boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+        '&::after': {
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            borderRadius: '50%',
+            animation: 'ripple 1.2s infinite ease-in-out',
+            border: '1px solid currentColor',
+            content: '""',
+        },
+    },
+    '@keyframes ripple': {
+        '0%': {
+            transform: 'scale(.8)',
+            opacity: 1,
+        },
+        '100%': {
+            transform: 'scale(2.4)',
+            opacity: 0,
+        },
+    },
+}));
+
 export default function AccountMenu({ showAccountMenu, setShowAccountMenu, setIsManager }: any) {
     const nav = useNavigate();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [showModal, setShowModal] = useState(false);
     const [update, setUpdate] = useState(0);
+    const [newReply, setNewReply] = useState(0);
     const [details, setDetails] = useState<UserDetails>({
         firstName: '',
         lastName: '',
@@ -64,6 +93,10 @@ export default function AccountMenu({ showAccountMenu, setShowAccountMenu, setIs
         nav('sign-up');
     };
 
+    const handleNavigationMessages = () => {
+        nav('contact');
+    };
+
     const handleLogOut = () => {
         setShowAccountMenu(false);
         setIsManager(false);
@@ -83,7 +116,11 @@ export default function AccountMenu({ showAccountMenu, setShowAccountMenu, setIs
     useEffect(() => {
         const fetchDetails = async () => {
             const res = await getDetails();
-            console.log(res);
+            console.log("hh", res);
+            const resAmountNewReply = await getAmountNewReply();
+            console.log(resAmountNewReply,"Codecademy");
+            
+            setNewReply(resAmountNewReply);
 
             setDetails({
                 firstName: res.firstName || '',
@@ -103,18 +140,31 @@ export default function AccountMenu({ showAccountMenu, setShowAccountMenu, setIs
         <Fragment>
             {showAccountMenu && (
                 <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
-                    <Tooltip title="Account settings">
-                        <IconButton
-                            onClick={handleClick}
-                            size="small"
-                            sx={{ ml: 2 }}
-                            aria-controls={open ? 'account-menu' : undefined}
-                            aria-haspopup="true"
-                            aria-expanded={open ? 'true' : undefined}
-                        >
-                            <Avatar sx={{ width: 32, height: 32, backgroundColor: "blue" }}>{details.firstName[0]}</Avatar>
-                        </IconButton>
-                    </Tooltip>
+                    {(newReply > 0) ?
+                        <Tooltip title="Account settings">
+                            <StyledBadge
+                                overlap="circular"
+                                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                                variant="dot"
+                                onClick={handleClick}
+                            >
+                                <Avatar sx={{ width: 32, height: 32, backgroundColor: "blue" }} >{details.firstName[0]}</Avatar>
+                            </StyledBadge>
+                        </Tooltip>
+                        :
+                        <Tooltip title="Account settings">
+                            <IconButton
+                                onClick={handleClick}
+                                size="small"
+                                sx={{ ml: 2 }}
+                                aria-controls={open ? 'account-menu' : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={open ? 'true' : undefined}
+                            >
+                                <Avatar sx={{ width: 32, height: 32, backgroundColor: "blue" }}>{details.firstName[0]}</Avatar>
+                            </IconButton>
+                        </Tooltip>
+                    }
                 </Box>
             )}
             <Menu
@@ -152,13 +202,23 @@ export default function AccountMenu({ showAccountMenu, setShowAccountMenu, setIs
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
-                <MenuItem disabled>
+                <MenuItem>
                     <Avatar /> {details.firstName}
                 </MenuItem>
-                <MenuItem disabled>
+                <MenuItem>
                     <AlternateEmailIcon /> {details.email}
                 </MenuItem>
                 <Divider />
+                {
+                    newReply > 0 && <MenuItem onClick={handleNavigationMessages}>
+                        <ListItemIcon>
+                            <Badge color="success" badgeContent={newReply} max={9}>
+                                <MailIcon />
+                            </Badge>
+                        </ListItemIcon>
+                        New messages
+                    </MenuItem>
+                }
                 <MenuItem onClick={handleNavigation}>
                     <ListItemIcon>
                         <PersonAdd fontSize="small" />

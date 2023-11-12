@@ -26,7 +26,7 @@ export default function ManageUsers() {
           nav('/');
           break;
         case 401:
-          nav('signin');
+          nav('sign-in');
           break;
         default:
           if (Array.isArray(res)) {
@@ -40,7 +40,7 @@ export default function ManageUsers() {
             }));
             setRows(rowsWithId);
           } else {
-            nav('signin');
+            nav('sign-in');
           }
           break;
       }

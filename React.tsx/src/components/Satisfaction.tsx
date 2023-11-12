@@ -16,7 +16,6 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import ToggleButton from '@mui/material/ToggleButton'
 import { addSatisfaction, checkSatisfaction, getSatisfaction } from '../api/api'
 import { Alert, TextField, Typography } from '@mui/material'
-
 import { Button } from 'react-bootstrap'
 export default function Satisfaction() {
     const [addToday, setAddToday] = useState<number | undefined>(0);
@@ -25,7 +24,7 @@ export default function Satisfaction() {
     const handleResponse = (response: number | undefined) => {
         switch (response) {
             case 200:
-                setAddToday(200)//enable to add satisfaction
+                setAddToday(200)   //enable to add satisfaction
                 break;
             case 409:
                 setAddToday(409);
@@ -169,8 +168,8 @@ export default function Satisfaction() {
         }));
     };
 
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    const handleSubmit = async () => {
+        // event.preventDefault();
         const response = await addSatisfaction(
             satisfaction.Service,
             satisfaction.Availability,
@@ -214,7 +213,7 @@ export default function Satisfaction() {
                     chartType
                 )}
             </div>
-            {addToday === 0 ? (<><Typography component="h1" variant="h5">
+            {addToday === 0 ? (<><br /><Typography component="h1" variant="h5">
                 You can share us your satisfaction
             </Typography>
                 <form onSubmit={handleSubmit}>

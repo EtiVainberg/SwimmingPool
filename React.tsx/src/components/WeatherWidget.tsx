@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import ripple from '../assets/SwimmingPool/Ripple.gif'
+import ripple from '../assets/SwimmingPool/loading.gif'
 import Box from '@mui/material/Box';
 
 interface WeatherData {
@@ -63,7 +63,6 @@ const WeatherWidget: React.FC = () => {
         <div>
             <p>Temperature: <b>{weatherData?.main.temp} °C</b></p>
             <p>Recommended Pool Temperature: <b>{poolTemperature.toFixed(2)} °C</b> </p>
-            {/* <DegreeMeter temperature={weatherData?.main.temp} minTemperature={weatherData?.main.temp_min} maxTemperature={weatherData?.main.temp_max} /> */}
         </div>
     );
 };
