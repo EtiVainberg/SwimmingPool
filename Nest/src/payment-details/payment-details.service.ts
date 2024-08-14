@@ -1,19 +1,22 @@
-import { ConflictException, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, HttpException, HttpStatus, Inject, Injectable, UnauthorizedException, forwardRef } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreditDetails, CreditDetailsDocument } from 'src/Schemas/credit-details.schema';
+import { AuthService } from 'src/auth/auth.service';
 import { jwtConstants } from 'src/auth/constants';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class PaymentDetailsService {
     
-    constructor(@InjectModel('CreditDetails') private readonly creditDetails: Model<CreditDetailsDocument>, private usersService: UsersService, private jwtService: JwtService) {
+    constructor(@InjectModel('CreditDetails') private readonly creditDetails: Model<CreditDetailsDocument>,
+        private usersService: UsersService, private jwtService: JwtService,
+        @Inject(forwardRef(() => AuthService)) private authService: AuthService) {
     }
 
     async addPaymentDetails(creditDetails: CreditDetails, token: string) {
-        const decodedToken =await this.decoded(token);
+        const decodedToken =await this.authService.decoded(token);
         try {
             const user_id = await this.usersService.findOneByEmail(decodedToken['email']);
             const trimmedCardNumber = creditDetails.cardNumber.replace(/\s+/g, '');
@@ -34,7 +37,7 @@ export class PaymentDetailsService {
     }
 
     async checkStorageCreditDetails(token: string) {
-        let decodedToken =await this.decoded(token);        
+        let decodedToken =await this.authService.decoded(token);        
         const user_id =await this.usersService.findOneByEmail(decodedToken['email']);        
         const currentDate = new Date();
 
@@ -44,19 +47,5 @@ export class PaymentDetailsService {
             return creditDetails.cardNumber.substring(12, 16);
         }
         return 0;
-    }
-
-    async decoded(token:string) {
-        let decodedToken: { [x: string]: string; };
-        try {
-            decodedToken = await this.jwtService.verifyAsync(token, {
-                secret: jwtConstants.secret,
-            });
-            return decodedToken;
-        }
-        catch (error) {
-            const status = HttpStatus.UNAUTHORIZED;
-            throw new HttpException({ message: error.message, status }, HttpStatus.UNAUTHORIZED);
-        }
     }
 }

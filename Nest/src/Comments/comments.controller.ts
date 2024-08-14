@@ -1,4 +1,3 @@
-
 import {
   Body,
   Controller,
@@ -6,7 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
-  Post, Put, Query, Req,
+  Post, Put, Req,
   UseGuards,
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
@@ -15,7 +14,7 @@ import { Role } from 'src/Roles/Role.enum';
 import { Roles } from 'src/Roles/roles.decorator';
 import { RolesGuard } from 'src/Roles/roles.guard';
 import { AuthService } from 'src/auth/auth.service';
-import { request } from 'http';
+import { log } from 'console';
 
 @Controller('comments')
 export class CommentsController {
@@ -24,9 +23,15 @@ export class CommentsController {
   @HttpCode(HttpStatus.CREATED)
   @Post('add')
   add(@Body('data') data: object, @Req() request) {
-   
-
     return this.commentsService.create(data, this.authService.extractTokenFromHeader(request));
+  }
+
+  @HttpCode(HttpStatus.CREATED)
+  @Post('addFromManger')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.Admin)
+  addFromManger(@Body('data') data: object, @Req() request) {
+    return this.commentsService.createFromManger(data, this.authService.extractTokenFromHeader(request));
   }
 
   @HttpCode(HttpStatus.OK)
@@ -40,29 +45,18 @@ export class CommentsController {
   @HttpCode(HttpStatus.OK)
   @Get('getAmountNewReply')
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.Admin,Role.User)
+  @Roles(Role.Admin, Role.User)
   getAmountOfNewReplyes(@Req() request) {
-    
     return this.commentsService.getAmountOfNewReply(this.authService.extractTokenFromHeader(request));
   }
-
-  // @HttpCode(HttpStatus.OK)
-  // @Get('getNewReply')
-  // @UseGuards(AuthGuard, RolesGuard)
-  // @Roles(Role.Admin,Role.User)
-  // getCommentAndReply(@Req() request) {
-  //   return this.commentsService.getCommentAndReply(this.authService.extractTokenFromHeader(request));
-  // }
 
   @HttpCode(HttpStatus.OK)
   @Get('getNewReply')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.Admin, Role.User)
-  getCommentAndReply(@Req() request, @Query('skip') skip: number, @Query('limit') limit: number ) {    
+  getCommentAndReply(@Req() request) {
     return this.commentsService.getCommentAndReply(
-      this.authService.extractTokenFromHeader(request),
-      skip,
-      limit
+      this.authService.extractTokenFromHeader(request)
     );
   }
 
@@ -71,7 +65,7 @@ export class CommentsController {
   @HttpCode(HttpStatus.OK)
   @Put(':commentId')
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.Admin)
+  @Roles(Role.Admin, Role.User)
   async updateStatus(@Param('commentId') commentId: string) {
     return this.commentsService.updateStatus(commentId);
   }
@@ -87,7 +81,7 @@ export class CommentsController {
   @HttpCode(HttpStatus.OK)
   @Post('reply')
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.Admin)
+  @Roles(Role.Admin,Role.User)
   async reply(@Body() data: any) {
     return this.commentsService.reply(data.reply, data._id);
   }

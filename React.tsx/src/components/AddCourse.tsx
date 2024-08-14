@@ -65,7 +65,7 @@ export default function AddCourse() {
     duration: 1,
     price: 0,
     capacity: 1,
-  })
+  });
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -82,7 +82,6 @@ export default function AddCourse() {
       const endDate = course.EndDate
         ? course.EndDate.toISOString()
         : new Date().toISOString()
-      console.log(new Date(startDate), new Date(endDate))
 
       const res = await addCourse(
         course.TeacherName,
@@ -95,13 +94,12 @@ export default function AddCourse() {
         course.price,
         course.capacity,
       )
-      console.log(res, 'rfg')
 
       setFormErrors({ startDate: false, endDate: false })
       let [newCourse, schedule] = [, ''];
       if (res != false) {
-        setFail(false)
-        ;[newCourse, schedule] = res
+        setFail(false);
+        [newCourse, schedule] = res
         nav('/courseSchedule', { state: { res } })
       } else {
         setFail(true)
@@ -156,7 +154,7 @@ export default function AddCourse() {
             alignItems: 'center',
           }}
         >
-          
+
           <form onSubmit={handleSubmit}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
@@ -301,7 +299,7 @@ export default function AddCourse() {
                   type="number"
                   name="price"
                   value={course.price}
-                  disabled={course.CoursesType==='Free swimming'||course.CoursesType==='SwimmingForSubscribers'}
+                  disabled={course.CoursesType === 'Free swimming' || course.CoursesType === 'SwimmingForSubscribers'}
                   onChange={handleChange}
                   inputProps={{
                     min: 0,
@@ -309,24 +307,24 @@ export default function AddCourse() {
                   fullWidth
                   required
                 />{fail && formErrors.startDate && formErrors.endDate && (
-            <><br /><Alert severity="error">
-              It is not possible to add the course at this time!!!
-            </Alert><br /></>
-          )}
+                  <><br /><Alert severity="error">
+                    It is not possible to add the course at this time!!!
+                  </Alert><br /></>
+                )}
               </Grid>
-              
+
               <Grid item xs={12}>
                 <Button type="submit" variant="contained" color="primary">
                   Add Course
                 </Button>
               </Grid>
             </Grid>
-           
+
           </form>
-          
+
         </Box>
       </Container>
     </ThemeProvider>
-    
+
   )
 }

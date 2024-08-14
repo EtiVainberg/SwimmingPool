@@ -1,18 +1,19 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { Satisfaction, SatisfactionDocument } from 'src/Schemas/satisfaction/satisfaction';
 import { UsersService } from 'src/users/users.service';
-import { jwtConstants } from 'src/auth/constants';
 import { AuthService } from 'src/auth/auth.service';
+import { User } from 'src/Schemas/user.schema';
 
 @Injectable()
 export class SatisfactionService {
   constructor(
     @InjectModel('Satisfaction') private readonly SatisfactionModel: Model<SatisfactionDocument>,
-    private userService: UsersService, private jwtService: JwtService, private authService: AuthService) { }
-
+    @Inject(forwardRef(() => UsersService)) private userService: UsersService,
+    private jwtService: JwtService,
+    private authService: AuthService) { }
 
   async create(token: string, satisfaction: Satisfaction) {
     const decodedToken = await this.authService.decoded(token);
@@ -32,7 +33,6 @@ export class SatisfactionService {
     return await this.SatisfactionModel.find().exec();
   }
 
-
   async checkSatisfaction(token: string) {
     const decodedToken = await this.authService.decoded(token);
     const user_id = await this.userService.findOneByEmail(decodedToken['email']);
@@ -42,7 +42,7 @@ export class SatisfactionService {
       User: user_id,
       Date: { $gte: currentDate },
     }).exec();
-    
+
     if (satisfactionEntry) {
       throw new HttpException(
         'You have already submitted a satisfaction entry today.',
@@ -50,6 +50,10 @@ export class SatisfactionService {
       );
     }
     else return HttpStatus.OK;
+  }
+
+  async find(userId: Object | User) {
+    return await this.SatisfactionModel.find({ User: userId });
   }
 
 }

@@ -14,7 +14,7 @@ import { ScheduleService } from 'src/schedule/schedule.service';
         {
             provide: APP_GUARD,
             useClass: RolesGuard
-        }
+        },
     ],
     exports: [CoursesService],
     controllers: [CoursesController],

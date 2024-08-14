@@ -1,0 +1,36 @@
+.popup-modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.popup-window {
+    width: 400px;
+    height: 200px;
+    background-color: lightblue;
+    animation: slide-up 1s ease-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px;
+    border-radius: 3%;
+    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); */
+}
+
+.popup-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.popup-content {
+    margin-bottom: 10px;
+}
+
+.weather-icon {
+    font-size: 40px;
+}
+
+.close-button {
+    color: #333;
+}

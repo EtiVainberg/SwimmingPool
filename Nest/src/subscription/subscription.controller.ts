@@ -3,7 +3,6 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { Role } from 'src/Roles/Role.enum';
 import { Roles } from 'src/Roles/roles.decorator';
 import { RolesGuard } from 'src/Roles/roles.guard';
-import { Request } from 'express';
 import { SubscriptionService } from './subscription.service';
 import { SubscriptionType } from 'src/Schemas/subscription/subscription';
 import { AuthService } from 'src/auth/auth.service';
@@ -28,8 +27,7 @@ export class SubscriptionController {
     @Get('check')
     @UseGuards(AuthGuard, RolesGuard)
     @Roles(Role.Admin, Role.User)
-    async checkActiveSubscription(@Req() req) {
-        
+    async checkActiveSubscription(@Req() req) {        
         return this.subscriptionService.check(this.authService.extractTokenFromHeader(req));
     }
 

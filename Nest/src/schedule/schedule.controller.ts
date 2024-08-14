@@ -19,4 +19,10 @@ export class ScheduleController {
     async getCourses(@Query('date') date: string) {
         return await this.service.getByDate(new Date(date));
     }
+
+    @Get('start-job')
+    startScheduledJob() {
+        this.service.startScheduledJob();
+        return 'Scheduled job started.';
+    }
 }

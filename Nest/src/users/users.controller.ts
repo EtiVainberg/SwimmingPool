@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post,Put,Req,  UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { User } from 'src/Schemas/user.schema';
 import { UsersService } from './users.service';
 import { AuthGuard } from '../auth/auth.guard';
@@ -10,12 +10,13 @@ import { AuthService } from 'src/auth/auth.service';
 
 @Controller('/')
 export class UsersController {
-    constructor(private usersService: UsersService,private readonly authService: AuthService) { }
+    constructor(private usersService: UsersService, private readonly authService: AuthService) {
+    }
 
     @HttpCode(HttpStatus.CREATED)
     @Post('register')
-    register(@Body() user: User) {
-        return this.usersService.create(user);
+    async register(@Body() user: User) {
+        return await this.usersService.create(user);
     }
 
     @HttpCode(HttpStatus.OK)
@@ -26,26 +27,27 @@ export class UsersController {
         return this.usersService.getUsers();
     }
 
-    
     @HttpCode(HttpStatus.OK)
     @Get('isManager')
     @UseGuards(AuthGuard, RolesGuard)
     @Roles(Role.Admin)
     isManager() { }
-    
+
     @HttpCode(HttpStatus.OK)
     @Get('userDetails')
     @UseGuards(AuthGuard, RolesGuard)
-    @Roles(Role.Admin,Role.User)
-    getUserDetails(@Req() request:any) {
+    @Roles(Role.Admin, Role.User)
+    getUserDetails(@Req() request: any) {
         return this.usersService.getUserDetails(this.authService.extractTokenFromHeader(request));
     }
 
     @Put('update')
     @UseGuards(AuthGuard, RolesGuard)
-    @Roles(Role.Admin,Role.User)
-    updateUserDetails(@Body('userDetails') user: any, @Req() request:any) {        
-        return this.usersService.update(this.authService.extractTokenFromHeader(request),user);
+    @Roles(Role.Admin, Role.User)
+    updateUserDetails(@Body('userDetails') user: any, @Req() request: any) {
+        console.log(user);
+
+        return this.usersService.update(this.authService.extractTokenFromHeader(request), user);
     }
 
     @HttpCode(HttpStatus.OK)
@@ -53,5 +55,22 @@ export class UsersController {
     @Roles(Role.Admin)
     getUserById(@Body('_id') _id: String) {
         return this.usersService.getUserById(_id);
+    }
+
+    @HttpCode(HttpStatus.OK)
+    @Get('getAllUserDetails')
+    @Roles(Role.Admin)
+    getAllUserDetails(@Query('email') email: string) {
+        return this.usersService.getAllUserDetails(email);
+    }
+
+
+    @HttpCode(HttpStatus.OK)
+    @Delete(':id')
+    @Roles(Role.Admin)
+    deleteUser(@Param('id') id: string) {
+        console.log('ui', id);
+
+        return this.usersService.deleteUser(id);
     }
 }

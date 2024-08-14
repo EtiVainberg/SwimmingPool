@@ -5,12 +5,13 @@ import { jwtConstants } from './constants';
 import * as bcrypt from 'bcrypt';
 import { Role } from 'src/Roles/Role.enum';
 import { Request } from 'express';
+import { User } from 'src/Schemas/user.schema';
 
 @Injectable()
 export class AuthService {
   constructor(
     @Inject(forwardRef(() => UsersService)) private userService: UsersService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
   ) { }
 
   async signIn(email: string, password: string) {
@@ -23,7 +24,7 @@ export class AuthService {
       password: "",
       role: Role.User
     }
-    const foundUser = await this.userService.findOne(user);
+    const foundUser = await this.userService.findOne(user as User);
     if (!foundUser) {
       throw new NotFoundException("User not exist! please register!!");
     }

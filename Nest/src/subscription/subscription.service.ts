@@ -1,25 +1,24 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Subscription } from 'rxjs';
 import { SubscriptionDocument, SubscriptionType, getPrice } from 'src/Schemas/subscription/subscription';
 import { addMonths, addYears, addWeeks } from 'date-fns';
 import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from 'src/auth/constants';
 import { UsersService } from 'src/users/users.service';
-// import { PDFDocument, rgb } from 'pdf-lib'
-import fs from 'fs'
 import { AuthService } from 'src/auth/auth.service';
-import { log } from 'console';
-// const { PDFDocument, rgb } = require('pdf-lib');
-// const fs = require('fs');
+import { User } from 'src/Schemas/user.schema';
 @Injectable()
 export class SubscriptionService {
 
 
-    constructor(@InjectModel('Subscription') private readonly SubscriptionModel: Model<SubscriptionDocument>, private usersService: UsersService, private jwtService: JwtService, private authService: AuthService) { }
+    constructor(
+        @InjectModel('Subscription') private readonly SubscriptionModel: Model<SubscriptionDocument>,
+        @Inject(forwardRef(() => UsersService)) private usersService: UsersService,
+            private jwtService: JwtService,
+        private authService: AuthService) { }
+
     async add(type: SubscriptionType, token: string) {
-        
         const startDate = new Date();
         let endDate: Date;
         switch (type) {
@@ -75,12 +74,14 @@ export class SubscriptionService {
         }
     }
 
-
     async getPrice(type: SubscriptionType) {
-      
 
         return getPrice(type); // returns 500
 
     }
 
+    async getDetails(userId: Object | User) {
+        const currentDate = new Date();
+        return await this.SubscriptionModel.findOne({ User: userId, EndDate: { $gt: currentDate } });
+    }
 }

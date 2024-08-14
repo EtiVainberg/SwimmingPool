@@ -23,6 +23,7 @@ import MailIcon from '@mui/icons-material/Mail';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import { Badge, Typography, styled } from '@mui/material';
+import updateGif from '../assets/SwimmingPool/loading.gif'
 
 interface UserDetails {
     firstName: string;
@@ -34,6 +35,10 @@ interface UserDetails {
     password: string;
 }
 
+interface TempUserDetails {
+    firstName: string;
+    email: string;
+}
 const StyledBadge = styled(Badge)(({ theme }) => ({
     '& .MuiBadge-badge': {
         backgroundColor: '#44b700',
@@ -63,12 +68,16 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
     },
 }));
 
-export default function AccountMenu({ showAccountMenu, setShowAccountMenu, setIsManager }: any) {
+export default function AccountMenu({ userChanger, showAccountMenu, setShowAccountMenu, setIsManager }: any) {
     const nav = useNavigate();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [showModal, setShowModal] = useState(false);
     const [update, setUpdate] = useState(0);
     const [newReply, setNewReply] = useState(0);
+    const [tempDetail, setTempDetail] = useState<TempUserDetails>({
+        firstName: '',
+        email: ''
+    });
     const [details, setDetails] = useState<UserDetails>({
         firstName: '',
         lastName: '',
@@ -87,6 +96,7 @@ export default function AccountMenu({ showAccountMenu, setShowAccountMenu, setIs
 
     const handleClose = () => {
         setAnchorEl(null);
+        setUpdate(0);
     };
 
     const handleNavigation = () => {
@@ -107,8 +117,6 @@ export default function AccountMenu({ showAccountMenu, setShowAccountMenu, setIs
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const res = await updateUserDetails(details);
-        console.log("666", res);
-
         setUpdate(res);
 
     }
@@ -116,12 +124,13 @@ export default function AccountMenu({ showAccountMenu, setShowAccountMenu, setIs
     useEffect(() => {
         const fetchDetails = async () => {
             const res = await getDetails();
-            console.log("hh", res);
             const resAmountNewReply = await getAmountNewReply();
-            console.log(resAmountNewReply,"Codecademy");
-            
-            setNewReply(resAmountNewReply);
 
+            setNewReply(resAmountNewReply);
+            setTempDetail({
+                firstName: res.firstName || '',
+                email: res.email || ''
+            });
             setDetails({
                 firstName: res.firstName || '',
                 lastName: res.lastName || '',
@@ -134,7 +143,7 @@ export default function AccountMenu({ showAccountMenu, setShowAccountMenu, setIs
         };
 
         fetchDetails();
-    }, []);
+    }, [userChanger]);
 
     return (
         <Fragment>
@@ -148,7 +157,7 @@ export default function AccountMenu({ showAccountMenu, setShowAccountMenu, setIs
                                 variant="dot"
                                 onClick={handleClick}
                             >
-                                <Avatar sx={{ width: 32, height: 32, backgroundColor: "blue" }} >{details.firstName[0]}</Avatar>
+                                <Avatar sx={{ width: 32, height: 32, backgroundColor: "blue" }} >{tempDetail.firstName[0]}</Avatar>
                             </StyledBadge>
                         </Tooltip>
                         :
@@ -161,7 +170,7 @@ export default function AccountMenu({ showAccountMenu, setShowAccountMenu, setIs
                                 aria-haspopup="true"
                                 aria-expanded={open ? 'true' : undefined}
                             >
-                                <Avatar sx={{ width: 32, height: 32, backgroundColor: "blue" }}>{details.firstName[0]}</Avatar>
+                                <Avatar sx={{ width: 32, height: 32, backgroundColor: "blue" }}>{tempDetail.firstName[0]}</Avatar>
                             </IconButton>
                         </Tooltip>
                     }
@@ -203,10 +212,10 @@ export default function AccountMenu({ showAccountMenu, setShowAccountMenu, setIs
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
                 <MenuItem>
-                    <Avatar /> {details.firstName}
+                    <Avatar /> {tempDetail.firstName}
                 </MenuItem>
                 <MenuItem>
-                    <AlternateEmailIcon /> {details.email}
+                    <AlternateEmailIcon /> {tempDetail.email}
                 </MenuItem>
                 <Divider />
                 {
@@ -240,7 +249,7 @@ export default function AccountMenu({ showAccountMenu, setShowAccountMenu, setIs
             </Menu>
 
             <Dialog open={showModal} onClose={() => setShowModal(false)} maxWidth="xs" fullWidth>
-                {(update === 0 || update === 400) &&
+                {(update === 0 || update === 400 || update === 421) &&
                     <>
                         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', paddingRight: '8px', color: 'blue' }}>
                             Change User Details
@@ -345,7 +354,7 @@ export default function AccountMenu({ showAccountMenu, setShowAccountMenu, setIs
 
                                     </Grid>
                                     <Grid item>
-                                        {update == 400 && (
+                                        {(update == 400 || update == 421) && (
                                             <Typography variant="caption" color="error">
                                                 Error Password!!
                                             </Typography>
@@ -369,6 +378,7 @@ export default function AccountMenu({ showAccountMenu, setShowAccountMenu, setIs
                                             }} />
                                     </Grid>
                                 </Grid>
+
                                 <Button
                                     type="submit"
                                     fullWidth
@@ -379,17 +389,20 @@ export default function AccountMenu({ showAccountMenu, setShowAccountMenu, setIs
                                 </Button>
                             </Box>
                         </DialogContent></>}
-                <DialogContent dividers>
-                    {update == 200 &&
-                        <><DialogTitle sx={{ display: 'flex', justifyContent: 'right', paddingRight: '8px', color: 'blue' }}>
-                            <IconButton className="close-button" onClick={() => setShowModal(false)}>
-                                <CloseIcon />
-                            </IconButton>
-                        </DialogTitle><Typography variant="h3" gutterBottom color={'red'}>
-                                Success!!!
-                            </Typography></>
+                {update == 200 && <DialogContent dividers>
 
-                    } </DialogContent>
+                    <><DialogTitle sx={{ display: 'flex', justifyContent: 'right', paddingRight: '8px', color: 'blue' }}>
+                        <IconButton className="close-button" onClick={() => setShowModal(false)}>
+                            <CloseIcon />
+                        </IconButton>
+                    </DialogTitle>
+                        <Typography variant="h3" gutterBottom color={'blue'} align={'center'}>
+                            <img src={updateGif} width={400} />
+                            updated!
+                        </Typography></>
+
+
+                </DialogContent>}
             </Dialog>
 
 

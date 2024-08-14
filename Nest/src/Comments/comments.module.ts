@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from 'src/Schemas/user.schema';
 import { CommentsController } from './comments.controller';
 import { JwtService } from '@nestjs/jwt';
 import { APP_GUARD } from '@nestjs/core';

@@ -6,33 +6,27 @@ import { useNavigate } from 'react-router-dom'
 import image from '../assets/SwimmingPool/DreamShaper_v7_A_swimming_pool_without_swimmers_with_a_lot_of_1.jpg'
 import image2 from '../assets/SwimmingPool/DreamShaper_v7_Background_of_blue_water_with_bubbles_1.jpg'
 import image3 from '../assets/SwimmingPool/water-droplets-blue-water-drops-splashes-drop-water-close-up-blue-water-drop-macro-1024x596.jpg'
-import image4 from '../assets/SwimmingPool/DreamShaper_v7_A_swimming_pool_without_swimmers_with_a_view_in_2.jpg'
 
 const images = [
   {
     url: image,
     title: 'Users',
-    width: '25%',
+    width: '33.3%',
     navigateTo: '/manageUsers',
   },
   {
     url: image2,
     title: 'Courses',
-    width: '25%',
+    width: '33.3%',
     navigateTo: '/ManageCourses',
   },
   {
     url: image3,
     title: 'Contact',
-    width: '25%',
+    width: '33.3%',
     navigateTo: '/manageContact',
   },
-  {
-    url: image4,
-    title: 'Attendance',
-    width: '25%',
-    navigateTo: '/manageAttendance',
-  },
+  
 ]
 
 const ImageButton = styled(ButtonBase)(({}) => ({

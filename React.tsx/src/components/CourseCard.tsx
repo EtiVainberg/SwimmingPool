@@ -63,4 +63,3 @@ export default function CourseCard(props: any) {
     </Card>
   );
 }
-

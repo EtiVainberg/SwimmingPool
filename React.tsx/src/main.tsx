@@ -20,7 +20,6 @@ import Schedule from './components/Schedule.tsx'
 import ManageUsers from './components/ManageUsers.tsx'
 import ManageContact from './components/ManageContact.tsx'
 import ManageCourses from './components/ManageCourses.tsx'
-import manageAttendance from './components/ManageAttendance.tsx'
 
 const router = createBrowserRouter([
   {
@@ -87,10 +86,7 @@ const router = createBrowserRouter([
         path: 'schedule',
         Component: Schedule,
       },
-      {
-        path: 'manageAttendance',
-        Component: manageAttendance,
-      },
+      
     ],
   },
 ])
