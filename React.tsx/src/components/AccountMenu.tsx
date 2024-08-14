@@ -23,7 +23,7 @@ import MailIcon from '@mui/icons-material/Mail';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import { Badge, Typography, styled } from '@mui/material';
-import updateGif from '../assets/SwimmingPool/loading.gif'
+import updateGif from '../assets/SwimmingPool/404-error-dribbble-800x600.gif'
 
 interface UserDetails {
     firstName: string;
